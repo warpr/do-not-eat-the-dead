@@ -1,0 +1,162 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import datetime
+
+# All the keys I can type on my keyboard without compose (in ascii order).
+possible_keys = (
+    'space', 'exclam', 'quotedbl', 'numbersign', 'dollar', 'percent',
+    'ampersand', 'apostrophe', 'parenleft', 'parentright', 'asterisk', 'plus',
+    'comma', 'minus', 'period', 'slash',
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    'colon', 'semicolon', 'less', 'equal', 'greater', 'question', 'at',
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
+    'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    'bracketleft', 'backslash', 'bracketright', 'asciicircum', 'underscore',
+    'grave',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+    'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    'braceleft', 'bar', 'braceright', 'tilde'
+)
+
+compose = (
+    { 'input': ('dead_tilde',      'space'), 'output': '~' },
+    { 'input': ('dead_acute',      'space'), 'output': "'" },
+    { 'input': ('dead_grave',      'space'), 'output': '`' },
+    { 'input': ('dead_circumflex', 'space'), 'output': '^' },
+    { 'input': ('dead_diaeresis',  'space'), 'output': '"' },
+    { 'input': ('dead_tilde',      'n'), 'output': 'ñ' },
+    { 'input': ('dead_tilde',      'N'), 'output': 'Ñ' },
+    { 'input': ('dead_acute',      'a'), 'output': 'á' },
+    { 'input': ('dead_acute',      'A'), 'output': 'Á' },
+    { 'input': ('dead_grave',      'a'), 'output': 'à' },
+    { 'input': ('dead_grave',      'A'), 'output': 'À' },
+    { 'input': ('dead_circumflex', 'a'), 'output': 'â' },
+    { 'input': ('dead_circumflex', 'A'), 'output': 'Â' },
+    { 'input': ('dead_diaeresis',  'a'), 'output': 'ä' },
+    { 'input': ('dead_diaeresis',  'A'), 'output': 'Ä' },
+    { 'input': ('dead_acute',      'e'), 'output': 'é' },
+    { 'input': ('dead_acute',      'E'), 'output': 'É' },
+    { 'input': ('dead_grave',      'e'), 'output': 'è' },
+    { 'input': ('dead_grave',      'E'), 'output': 'È' },
+    { 'input': ('dead_circumflex', 'e'), 'output': 'ê' },
+    { 'input': ('dead_circumflex', 'E'), 'output': 'Ê' },
+    { 'input': ('dead_diaeresis',  'e'), 'output': 'ë' },
+    { 'input': ('dead_diaeresis',  'E'), 'output': 'Ë' },
+    { 'input': ('dead_acute',      'i'), 'output': 'í' },
+    { 'input': ('dead_acute',      'I'), 'output': 'Í' },
+    { 'input': ('dead_grave',      'i'), 'output': 'ì' },
+    { 'input': ('dead_grave',      'I'), 'output': 'Ì' },
+    { 'input': ('dead_circumflex', 'i'), 'output': 'î' },
+    { 'input': ('dead_circumflex', 'I'), 'output': 'Î' },
+    { 'input': ('dead_diaeresis',  'i'), 'output': 'ï' },
+    { 'input': ('dead_diaeresis',  'I'), 'output': 'Ï' },
+    { 'input': ('dead_acute',      'o'), 'output': 'ó' },
+    { 'input': ('dead_acute',      'O'), 'output': 'Ó' },
+    { 'input': ('dead_grave',      'o'), 'output': 'ò' },
+    { 'input': ('dead_grave',      'O'), 'output': 'Ò' },
+    { 'input': ('dead_circumflex', 'o'), 'output': 'ô' },
+    { 'input': ('dead_circumflex', 'O'), 'output': 'Ô' },
+    { 'input': ('dead_diaeresis',  'o'), 'output': 'ö' },
+    { 'input': ('dead_diaeresis',  'O'), 'output': 'Ö' },
+    { 'input': ('dead_acute',      'u'), 'output': 'ú' },
+    { 'input': ('dead_acute',      'U'), 'output': 'Ú' },
+    { 'input': ('dead_grave',      'u'), 'output': 'ù' },
+    { 'input': ('dead_grave',      'U'), 'output': 'Ù' },
+    { 'input': ('dead_circumflex', 'u'), 'output': 'û' },
+    { 'input': ('dead_circumflex', 'U'), 'output': 'Û' },
+    { 'input': ('dead_diaeresis',  'u'), 'output': 'ü' },
+    { 'input': ('dead_diaeresis',  'U'), 'output': 'Ü' },
+)
+
+keysymtostring = {
+    'dead_tilde'       :    '~',
+    'dead_acute'       :    "'",
+    'dead_grave'       :    '`',
+    'dead_circumflex'  :    '^',
+    'dead_diaeresis'   :    '"',
+    'space'            :    ' ',
+    'exclam'           :    '!',
+    'quotedbl'         :    '"',
+    'numbersign'       :    '#',
+    'dollar'           :    '$',
+    'percent'          :    '%',
+    'ampersand'        :    '&',
+    'apostrophe'       :    "'",
+    'parenleft'        :    "(",
+    'parentright'      :    ")",
+    'asterisk'         :    "*",
+    'plus'             :    "+",
+    'comma'            :    ",",
+    'minus'            :    "-",
+    'period'           :    ".",
+    'slash'            :    "/",
+    'colon'            :    ":",
+    'semicolon'        :    ";",
+    'less'             :    "<",
+    'equal'            :    "=",
+    'greater'          :    ">",
+    'question'         :    "?",
+    'at'               :    "@",
+    'bracketleft'      :    "[",
+    'backslash'        :    "\\",
+    'bracketright'     :    "]",
+    'asciicircum'      :    "^",
+    'underscore'       :    "_",
+    'grave'            :    "`",
+    'braceleft'        :    "{",
+    'bar'              :    "|",
+    'braceright'       :    "}",
+    'tilde'            :    "~"
+}
+
+
+def fallback (dead, key):
+    if dead in keysymtostring:
+        dead = keysymtostring[dead]
+
+    if key in keysymtostring:
+        key = keysymtostring[key]
+
+    return dead + key
+
+
+def perm (compose, keys):
+    permutations = {}
+
+    for c in compose:
+        dead = c["input"][0]
+        other = c["input"][1]
+
+        if not dead in permutations:
+            permutations[dead] = {}
+
+        permutations[dead][other] = c["output"]
+
+    for deadkey in permutations.iterkeys ():
+        for k in keys:
+            if not k in permutations[deadkey]:
+                permutations[deadkey][k] = fallback(deadkey, k)
+
+    return permutations
+
+
+if __name__ == "__main__":
+    p = perm (compose, possible_keys)
+
+    print "# -*- mode: Conf[Colon] -*-"
+    print "#"
+    print "#", datetime.datetime.utcnow ().isoformat ()
+    print "# Generated by Do Not Eat The Dead"
+    print "# -> https://github.com/warpr/do-not-eat-the-dead"
+    print "#"
+
+    for deadkey in p.iterkeys ():
+        print ""
+        for key, output in p[deadkey].iteritems ():
+            keyseq = '<%s> <%s>' % (deadkey, key)
+            print '%-32s : "%s"' % (keyseq, output.replace ('"', '\\"'))
+
+    print ""
+
+

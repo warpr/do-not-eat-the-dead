@@ -5,7 +5,7 @@ This is a little tool to generate a ~/.XCompose file which does not
 consume dead keys unless they are part of a valid composed characted.
 
 By default, when you configure your keyboard in X11 to use one of the
-international variants [2] you can compose characters using dead keys
+international variants [1] you can compose characters using dead keys
 -- for example, _~n_ becomes _ñ_.  However, _~p_ is meaningless, so
 doesn't output anything.  This is jarring if you're used to dead keys
 as they are implemented on Microsoft Windows, where _~p_ would just
